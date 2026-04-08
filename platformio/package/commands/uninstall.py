@@ -23,6 +23,7 @@ from platformio.package.manager.platform import PlatformPackageManager
 from platformio.package.manager.tool import ToolPackageManager
 from platformio.package.meta import PackageSpec
 from platformio.project.config import ProjectConfig
+from platformio.project.helpers import get_project_env_libdeps_dir
 from platformio.project.savedeps import pkg_to_save_spec, save_project_dependencies
 
 
@@ -190,7 +191,7 @@ def _uninstall_project_env_libraries(project_env, options):
     already_up_to_date = True
     config = ProjectConfig.get_instance()
     lm = LibraryPackageManager(
-        os.path.join(config.get("platformio", "libdeps_dir"), project_env)
+        get_project_env_libdeps_dir(project_env, config)
     )
     if options.get("silent"):
         lm.set_log_level(logging.WARN)
@@ -212,7 +213,7 @@ def _uninstall_project_env_custom_libraries(project_env, options):
     already_up_to_date = True
     config = ProjectConfig.get_instance()
     lm = LibraryPackageManager(
-        os.path.join(config.get("platformio", "libdeps_dir"), project_env)
+        get_project_env_libdeps_dir(project_env, config)
     )
     if not options.get("silent"):
         lm.set_log_level(logging.DEBUG)

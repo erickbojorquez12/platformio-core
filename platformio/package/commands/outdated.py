@@ -23,6 +23,7 @@ from platformio.package.manager.platform import PlatformPackageManager
 from platformio.package.meta import PackageSpec
 from platformio.platform.factory import PlatformFactory
 from platformio.project.config import ProjectConfig
+from platformio.project.helpers import get_project_env_libdeps_dir
 
 
 class OutdatedCandidate:
@@ -200,7 +201,7 @@ def find_library_candidates(config, environments):
     for env in config.envs():
         if environments and env not in environments:
             continue
-        package_dir = os.path.join(config.get("platformio", "libdeps_dir") or "", env)
+        package_dir = get_project_env_libdeps_dir(env, config) or ""
         lib_deps = [
             item for item in config.get(f"env:{env}", "lib_deps", []) if "/" in item
         ]
