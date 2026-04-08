@@ -593,6 +593,15 @@ ProjectOptions = OrderedDict(
                 default="chain",
             ),
             ConfigEnvOption(
+                group="directory",
+                name="libdeps_dir",
+                description=(
+                    "Internal storage where Library Manager will install project "
+                    "dependencies for a given environment"
+                ),
+                validate=validate_dir,
+            ),
+            ConfigEnvOption(
                 group="library",
                 name="lib_compat_mode",
                 description=(
