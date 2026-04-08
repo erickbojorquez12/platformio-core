@@ -23,6 +23,7 @@ import pytest
 
 from platformio import fs
 from platformio.project.config import ProjectConfig
+from platformio.project.helpers import get_project_env_libdeps_dir
 from platformio.project.exception import (
     InvalidEnvNameError,
     InvalidProjectConfError,
@@ -89,6 +90,7 @@ build_flags =
     ${custom.debug_flags}
     -D SERIAL_BAUD_RATE=${this.monitor_speed}
 lib_install = 574
+libdeps_dir = .custom_libdeps/extra_1
 
 [env:extra_2]
 build_flags = ${custom.debug_flags} ${custom.extra_flags}
@@ -400,6 +402,7 @@ def test_items(config):
             ],
         ),
         ("lib_install", ["574"]),
+        ("libdeps_dir", os.path.abspath(".custom_libdeps/extra_1")),
         ("monitor_speed", 9600),
         ("custom_monitor_speed", "115200"),
         ("lib_deps", ["574"]),
@@ -731,3 +734,13 @@ test_testing_command = /usr/bin/flash-tool -p $UPLOAD_PORT -b $UPLOAD_SPEED
     assert result["warnings"] and len(result["warnings"]) == 2
     assert "deprecated" in result["warnings"][0]
     assert "Invalid variable declaration" in result["warnings"][1]
+
+
+def test_env_libdeps_dir(config):
+    # extra_1 has a specific libdeps_dir
+    assert config.get("env:extra_1", "libdeps_dir") == os.path.abspath(".custom_libdeps/extra_1")
+    assert get_project_env_libdeps_dir("extra_1", config) == os.path.abspath(".custom_libdeps/extra_1")
+
+    # extra_2 inherits from platformio.libdeps_dir
+    default_libdeps_dir = os.path.join(config.get("platformio", "libdeps_dir"), "extra_2")
+    assert get_project_env_libdeps_dir("extra_2", config) == default_libdeps_dir
