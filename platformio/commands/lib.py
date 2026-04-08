@@ -33,7 +33,7 @@ from platformio.package.manager.library import LibraryPackageManager
 from platformio.package.meta import PackageItem, PackageSpec
 from platformio.proc import is_ci
 from platformio.project.config import ProjectConfig
-from platformio.project.helpers import get_project_dir, is_platformio_project
+from platformio.project.helpers import get_project_dir, get_project_env_libdeps_dir, is_platformio_project
 
 CTX_META_INPUT_DIRS_KEY = __name__ + ".input_dirs"
 CTX_META_PROJECT_ENVIRONMENTS_KEY = __name__ + ".project_environments"
@@ -122,11 +122,10 @@ def cli(ctx, **options):
                 os.path.join(storage_dir, "platformio.ini")
             )
             config.validate(options["environment"], silent=in_silence)
-            libdeps_dir = config.get("platformio", "libdeps_dir")
             for env in config.envs():
                 if options["environment"] and env not in options["environment"]:
                     continue
-                storage_dir = os.path.join(libdeps_dir, env)
+                storage_dir = get_project_env_libdeps_dir(env, config)
                 ctx.meta[CTX_META_STORAGE_DIRS_KEY].append(storage_dir)
                 ctx.meta[CTX_META_STORAGE_LIBDEPS_KEY][storage_dir] = config.get(
                     "env:" + env, "lib_deps", []
