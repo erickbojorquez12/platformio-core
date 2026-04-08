@@ -49,7 +49,7 @@ def CleanProject(env, fullclean=False):
         fs.rmtree(path)
 
     build_dir = env.subst("$BUILD_DIR")
-    libdeps_dir = env.subst(os.path.join("$PROJECT_LIBDEPS_DIR", "$PIOENV"))
+    libdeps_dir = env.subst("$PROJECT_LIBDEPS_DIR")
     if os.path.isdir(build_dir):
         _clean_dir(build_dir)
     else:
