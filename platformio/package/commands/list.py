@@ -25,6 +25,7 @@ from platformio.package.meta import PackageItem, PackageSpec
 from platformio.platform.exception import UnknownPlatform
 from platformio.platform.factory import PlatformFactory
 from platformio.project.config import ProjectConfig
+from platformio.project.helpers import get_project_env_libdeps_dir
 
 
 @click.command("list", short_help="List installed packages")
@@ -215,7 +216,7 @@ def print_project_env_library_packages(project_env, options):
     config = ProjectConfig.get_instance()
     lib_deps = config.get(f"env:{project_env}", "lib_deps")
     lm = LibraryPackageManager(
-        os.path.join(config.get("platformio", "libdeps_dir"), project_env)
+        get_project_env_libdeps_dir(project_env, config)
     )
     if not lib_deps or not lm.get_installed():
         return None
