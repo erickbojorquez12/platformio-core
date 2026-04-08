@@ -31,7 +31,7 @@ from SCons.Script import Variables  # pylint: disable=import-error
 from platformio import app, fs
 from platformio.platform.base import PlatformBase
 from platformio.proc import get_pythonexe_path
-from platformio.project.helpers import get_project_dir
+from platformio.project.helpers import get_project_dir, get_project_env_libdeps_dir
 
 AllowSubstExceptions(NameError)
 
@@ -118,7 +118,7 @@ env.Replace(
     PROJECT_CORE_DIR=config.get("platformio", "core_dir"),
     PROJECT_PACKAGES_DIR=config.get("platformio", "packages_dir"),
     PROJECT_WORKSPACE_DIR=config.get("platformio", "workspace_dir"),
-    PROJECT_LIBDEPS_DIR=config.get("platformio", "libdeps_dir"),
+    PROJECT_LIBDEPS_DIR=get_project_env_libdeps_dir(env.subst("$PIOENV"), config),
     PROJECT_INCLUDE_DIR=config.get("platformio", "include_dir"),
     PROJECT_SRC_DIR=config.get("platformio", "src_dir"),
     PROJECTSRC_DIR="$PROJECT_SRC_DIR",  # legacy for dev/platform
@@ -130,7 +130,7 @@ env.Replace(
     BUILD_CACHE_DIR=config.get("platformio", "build_cache_dir"),
     LIBSOURCE_DIRS=[
         config.get("platformio", "lib_dir"),
-        os.path.join("$PROJECT_LIBDEPS_DIR", "$PIOENV"),
+        "$PROJECT_LIBDEPS_DIR",
         config.get("platformio", "globallib_dir"),
     ],
 )
