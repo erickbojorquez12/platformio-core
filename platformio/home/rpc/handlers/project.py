@@ -28,7 +28,7 @@ from platformio.package.manager.platform import PlatformPackageManager
 from platformio.platform.factory import PlatformFactory
 from platformio.project.config import ProjectConfig
 from platformio.project.exception import ProjectError
-from platformio.project.helpers import get_project_dir, is_platformio_project
+from platformio.project.helpers import get_project_dir, get_project_env_libdeps_dir, is_platformio_project
 from platformio.project.integration.generator import ProjectGenerator
 from platformio.project.options import get_config_options_schema
 
@@ -87,11 +87,10 @@ class ProjectRPC(BaseRPCHandler):
             data["description"] = config.get("platformio", "description")
             data["libExtraDirs"].extend(config.get("platformio", "lib_extra_dirs", []))
 
-            libdeps_dir = config.get("platformio", "libdeps_dir")
             for section in config.sections():
                 if not section.startswith("env:"):
                     continue
-                data["envLibdepsDirs"].append(os.path.join(libdeps_dir, section[4:]))
+                data["envLibdepsDirs"].append(get_project_env_libdeps_dir(section[4:], config))
                 if config.has_option(section, "board"):
                     data["boards"].append(config.get(section, "board"))
                 data["libExtraDirs"].extend(config.get(section, "lib_extra_dirs", []))
