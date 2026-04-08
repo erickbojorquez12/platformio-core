@@ -29,6 +29,7 @@ from platformio.package.version import SemanticVersionError
 from platformio.platform.exception import UnknownPlatform
 from platformio.platform.factory import PlatformFactory
 from platformio.project.config import ProjectConfig
+from platformio.project.helpers import get_project_env_libdeps_dir
 from platformio.project.savedeps import pkg_to_save_spec, save_project_dependencies
 from platformio.test.result import TestSuite
 from platformio.test.runners.factory import TestRunnerFactory
@@ -221,7 +222,7 @@ def _install_project_env_libraries(project_env, options):
             )
 
     env_lm = LibraryPackageManager(
-        os.path.join(config.get("platformio", "libdeps_dir"), project_env),
+        get_project_env_libdeps_dir(project_env, config),
         compatibility=(
             PackageCompatibility(**compatibility_qualifiers)
             if compatibility_qualifiers
@@ -316,7 +317,7 @@ def _install_project_env_custom_libraries(project_env, options):
     already_up_to_date = not options.get("force")
     config = ProjectConfig.get_instance()
     lm = LibraryPackageManager(
-        os.path.join(config.get("platformio", "libdeps_dir"), project_env)
+        get_project_env_libdeps_dir(project_env, config)
     )
     if not options.get("silent"):
         lm.set_log_level(logging.DEBUG)
