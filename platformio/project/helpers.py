@@ -63,6 +63,15 @@ def get_project_watch_lib_dirs():
 get_project_all_lib_dirs = get_project_watch_lib_dirs
 
 
+def get_project_env_libdeps_dir(env_name, config=None):
+    if not config:
+        config = ProjectConfig.get_instance()
+    env_libdeps_dir = config.get(f"env:{env_name}", "libdeps_dir")
+    if env_libdeps_dir:
+        return env_libdeps_dir
+    return os.path.join(config.get("platformio", "libdeps_dir"), env_name)
+
+
 def get_project_cache_dir():
     """Deprecated, use ProjectConfig.get("platformio", "cache_dir") instead"""
     return ProjectConfig.get_instance().get("platformio", "cache_dir")
