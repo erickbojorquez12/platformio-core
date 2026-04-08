@@ -998,7 +998,7 @@ class ProjectAsLibBuilder(LibBuilderBase):
 
         did_install = False
         lm = LibraryPackageManager(
-            self.env.subst(os.path.join("$PROJECT_LIBDEPS_DIR", "$PIOENV"))
+            self.env.subst("$PROJECT_LIBDEPS_DIR")
         )
         for spec in not_found_specs:
             try:
