@@ -20,7 +20,7 @@ import bottle
 from platformio import fs, util
 from platformio.debug.helpers import get_default_debug_env
 from platformio.proc import where_is_program
-from platformio.project.helpers import load_build_metadata
+from platformio.project.helpers import get_project_env_libdeps_dir, load_build_metadata
 
 
 class ProjectGenerator:
@@ -111,8 +111,8 @@ class ProjectGenerator:
                     "project_src_dir": self.config.get("platformio", "src_dir"),
                     "project_lib_dir": self.config.get("platformio", "lib_dir"),
                     "project_test_dir": self.config.get("platformio", "test_dir"),
-                    "project_libdeps_dir": os.path.join(
-                        self.config.get("platformio", "libdeps_dir"), self.env_name
+                    "project_libdeps_dir": get_project_env_libdeps_dir(
+                        self.env_name, self.config
                     ),
                 }
             )
