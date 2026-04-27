@@ -99,7 +99,7 @@ def cli(  # pylint: disable=too-many-positional-arguments
     if os.path.isfile(project_dir):
         project_dir = find_project_dir_above(project_dir)
 
-    targets = list(target) if target else []
+    targets = [t for t in target if t != "build"] if target else []
     del target
     only_monitor = targets == ["monitor"]
     is_test_running = CTX_META_TEST_IS_RUNNING in ctx.meta
@@ -311,6 +311,16 @@ def print_processing_summary(results, verbose=False):
 def print_target_list(envs):
     tabular_data = []
     for env, data in load_build_metadata(os.getcwd(), envs).items():
+        env_targets = data.get("targets", []).copy()
+        if not any(t.get("name") == "build" for t in env_targets):
+            env_targets.append(
+                {
+                    "name": "build",
+                    "group": "General",
+                    "title": "Build",
+                    "description": "Build project environments",
+                }
+            )
         tabular_data.extend(
             sorted(
                 [
@@ -321,7 +331,7 @@ def print_target_list(envs):
                         t["title"],
                         t.get("description"),
                     )
-                    for t in data.get("targets", [])
+                    for t in env_targets
                 ],
                 key=operator.itemgetter(1, 2),
             )
