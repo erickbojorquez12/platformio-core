@@ -31,6 +31,7 @@ class EnvironmentProcessor:
         upload_port,
         jobs,
         program_args,
+        custom_args,
         silent,
         verbose,
     ):
@@ -41,6 +42,7 @@ class EnvironmentProcessor:
         self.upload_port = upload_port
         self.jobs = jobs
         self.program_args = program_args
+        self.custom_args = custom_args
         self.silent = silent
         self.verbose = verbose
         self.options = config.items(env=name, as_dict=True)
@@ -50,6 +52,7 @@ class EnvironmentProcessor:
             pioenv=self.name,
             project_config=self.config.path,
             program_args=self.program_args,
+            custom_args=self.custom_args,
         )
 
         if CTX_META_TEST_RUNNING_NAME in self.cmd_ctx.meta:
