@@ -205,6 +205,9 @@ def print_welcome_banner():
 
 
 def check_platformio_upgrade():
+    if app.is_core_upgrades_disabled():
+        return
+
     interval = int(app.get_setting("check_platformio_interval")) * 3600 * 24
     check_state = app.get_state_item("last_check", {})
     last_checked_time = check_state.get("platformio_upgrade", 0)
