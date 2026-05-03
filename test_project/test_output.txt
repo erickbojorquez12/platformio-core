@@ -1,0 +1,4 @@
+ARGUMENTS: {'PIOVERBOSE': '0', 'ISATTY': '0', 'PIOENV': 'bmF0aXZl', 'PROJECT_CONFIG': 'QzpcVXNlcnNcemFtYm9cRGVza3RvcFxQcm9qXHBsYXRmb3JtaW8tY29yZS1kZXZlbG9wXHRlc3RfcHJvamVjdFxwbGF0Zm9ybWlvLmluaQ==', 'PROGRAM_ARGS': 'WyItLXNpZ25fa2V5IiwgIm15a2V5Il0=', 'BUILD_SCRIPT': 'QzpcVXNlcnNcemFtYm9cLnBsYXRmb3JtaW9ccGxhdGZvcm1zXG5hdGl2ZVxidWlsZGVyXG1haW4ucHk='}
+ARGLIST: [('PIOVERBOSE', '0'), ('ISATTY', '0'), ('PIOENV', 'bmF0aXZl'), ('PROJECT_CONFIG', 'QzpcVXNlcnNcemFtYm9cRGVza3RvcFxQcm9qXHBsYXRmb3JtaW8tY29yZS1kZXZlbG9wXHRlc3RfcHJvamVjdFxwbGF0Zm9ybWlvLmluaQ=='), ('PROGRAM_ARGS', 'WyItLXNpZ25fa2V5IiwgIm15a2V5Il0='), ('BUILD_SCRIPT', 'QzpcVXNlcnNcemFtYm9cLnBsYXRmb3JtaW9ccGxhdGZvcm1zXG5hdGl2ZVxidWlsZGVyXG1haW4ucHk=')]
+PROGRAM_ARGS: ['--sign_key', 'mykey']
+Exception: 'SConsEnvironment' object has no attribute 'AddOption'
