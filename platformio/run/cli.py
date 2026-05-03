@@ -40,7 +40,12 @@ except NotImplementedError:
 DEFAULT_JOB_NUMS = int(os.getenv("PLATFORMIO_RUN_JOBS", SYSTEM_CPU_COUNT))
 
 
-@click.command("run", short_help="Run project targets (build, upload, clean, etc.)")
+@click.command(
+    "run",
+    short_help="Run project targets (build, upload, clean, etc.)",
+    context_settings=dict(ignore_unknown_options=True),
+)
+@click.argument("custom_args", nargs=-1, type=click.UNPROCESSED)
 @click.option("-e", "--environment", multiple=True)
 @click.option("-t", "--target", multiple=True)
 @click.option("--upload-port")
@@ -92,6 +97,7 @@ def cli(  # pylint: disable=too-many-positional-arguments
     list_targets,
     silent,
     verbose,
+    custom_args,
 ):
     app.set_session_var("custom_project_conf", project_conf)
 
@@ -153,6 +159,7 @@ def cli(  # pylint: disable=too-many-positional-arguments
                     monitor_port,
                     jobs,
                     program_args,
+                    custom_args,
                     is_test_running,
                     silent,
                     verbose,
@@ -185,6 +192,7 @@ def process_env(  # pylint: disable=too-many-positional-arguments
     monitor_port,
     jobs,
     program_args,
+    custom_args,
     is_test_running,
     silent,
     verbose,
@@ -205,6 +213,7 @@ def process_env(  # pylint: disable=too-many-positional-arguments
             upload_port,
             jobs,
             program_args,
+            custom_args,
             silent,
             verbose,
         ).process()
