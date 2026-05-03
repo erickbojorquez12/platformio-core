@@ -291,3 +291,12 @@ def get_host_id():
 
 def get_host_name():
     return str(socket.gethostname())[:255]
+
+
+def is_core_upgrades_disabled():
+    try:
+        from platformio.__upgrades_disabled__ import DISABLED  # type: ignore # pylint: disable=import-outside-toplevel
+
+        return DISABLED
+    except ImportError:
+        return False
