@@ -27,7 +27,12 @@ from platformio.test.runners.base import TestRunnerOptions
 from platformio.test.runners.factory import TestRunnerFactory
 
 
-@click.command("test", short_help="Unit Testing")
+@click.command(
+    "test",
+    short_help="Unit Testing",
+    context_settings=dict(ignore_unknown_options=True),
+)
+@click.argument("custom_args", nargs=-1, type=click.UNPROCESSED)
 @click.option("--environment", "-e", multiple=True)
 @click.option(
     "--filter",
@@ -111,6 +116,7 @@ def cli(  # pylint: disable=too-many-arguments,too-many-positional-arguments,too
     json_output_path,
     junit_output_path,
     verbose,
+    custom_args,
 ):
     app.set_session_var("custom_project_conf", project_conf)
 
@@ -148,6 +154,7 @@ def cli(  # pylint: disable=too-many-arguments,too-many-positional-arguments,too
                     monitor_rts=monitor_rts,
                     monitor_dtr=monitor_dtr,
                     program_args=program_args,
+                    custom_args=custom_args,
                 ),
             )
             click.echo()
