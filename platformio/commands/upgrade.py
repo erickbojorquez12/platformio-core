@@ -37,6 +37,13 @@ DEVELOP_INIT_SCRIPT_URL = (
 @click.option("--only-dependencies", is_flag=True)
 @click.option("--verbose", "-v", is_flag=True)
 def cli(dev, only_dependencies, verbose):
+    if app.is_core_upgrades_disabled():
+        return click.secho(
+            "PlatformIO Core updates are handled by your system package manager.\n"
+            "Please use it to upgrade.",
+            fg="yellow",
+        )
+
     if only_dependencies:
         return upgrade_pip_dependencies(verbose)
 
