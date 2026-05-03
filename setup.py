@@ -14,6 +14,20 @@
 
 from setuptools import find_packages, setup
 
+import os
+
+# Generate the flag for disabling upgrades
+upgrades_disabled_path = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)), "platformio", "__upgrades_disabled__.py"
+)
+
+if os.environ.get("PLATFORMIO_DISABLE_UPGRADES") == "1":
+    with open(upgrades_disabled_path, "w") as fp:
+        fp.write("DISABLED = True\n")
+else:
+    if os.path.exists(upgrades_disabled_path):
+        os.remove(upgrades_disabled_path)
+
 from platformio import (
     __author__,
     __description__,
