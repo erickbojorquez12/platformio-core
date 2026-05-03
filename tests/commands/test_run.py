@@ -381,3 +381,31 @@ platform = native
     """)
     result = clirunner.invoke(cmd_run, ["--project-dir", str(project_dir)])
     validate_cliresult(result)
+
+
+def test_custom_scons_args(clirunner, validate_cliresult, tmp_path: Path):
+    project_dir = tmp_path / "project"
+    src_dir = project_dir / "src"
+    src_dir.mkdir(parents=True)
+    (src_dir / "main.c").write_text("""
+int main(void) {
+    return(0);
+}
+""")
+    (project_dir / "platformio.ini").write_text("""
+[env:native]
+platform = native
+extra_scripts = pre:script.py
+    """)
+    (project_dir / "script.py").write_text("""
+Import("env")
+from SCons.Script import AddOption, GetOption
+AddOption("--custom-scons-arg", dest="custom_scons_arg", action="store", default="default_value")
+print("CUSTOM_SCONS_ARG=" + str(GetOption("custom_scons_arg")))
+    """)
+    
+    result = clirunner.invoke(
+        cmd_run, ["--project-dir", str(project_dir), "--custom-scons-arg=hello_world"]
+    )
+    validate_cliresult(result)
+    assert "CUSTOM_SCONS_ARG=hello_world" in result.output

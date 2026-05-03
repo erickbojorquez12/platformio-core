@@ -40,7 +40,12 @@ except NotImplementedError:
 DEFAULT_JOB_NUMS = int(os.getenv("PLATFORMIO_RUN_JOBS", SYSTEM_CPU_COUNT))
 
 
-@click.command("run", short_help="Run project targets (build, upload, clean, etc.)")
+@click.command(
+    "run",
+    short_help="Run project targets (build, upload, clean, etc.)",
+    context_settings=dict(ignore_unknown_options=True),
+)
+@click.argument("custom_args", nargs=-1, type=click.UNPROCESSED)
 @click.option("-e", "--environment", multiple=True)
 @click.option("-t", "--target", multiple=True)
 @click.option("--upload-port")
@@ -92,6 +97,7 @@ def cli(  # pylint: disable=too-many-positional-arguments
     list_targets,
     silent,
     verbose,
+    custom_args,
 ):
     app.set_session_var("custom_project_conf", project_conf)
 
@@ -99,7 +105,7 @@ def cli(  # pylint: disable=too-many-positional-arguments
     if os.path.isfile(project_dir):
         project_dir = find_project_dir_above(project_dir)
 
-    targets = list(target) if target else []
+    targets = [t for t in target if t != "build"] if target else []
     del target
     only_monitor = targets == ["monitor"]
     is_test_running = CTX_META_TEST_IS_RUNNING in ctx.meta
@@ -153,6 +159,7 @@ def cli(  # pylint: disable=too-many-positional-arguments
                     monitor_port,
                     jobs,
                     program_args,
+                    custom_args,
                     is_test_running,
                     silent,
                     verbose,
@@ -185,6 +192,7 @@ def process_env(  # pylint: disable=too-many-positional-arguments
     monitor_port,
     jobs,
     program_args,
+    custom_args,
     is_test_running,
     silent,
     verbose,
@@ -205,6 +213,7 @@ def process_env(  # pylint: disable=too-many-positional-arguments
             upload_port,
             jobs,
             program_args,
+            custom_args,
             silent,
             verbose,
         ).process()
@@ -311,6 +320,16 @@ def print_processing_summary(results, verbose=False):
 def print_target_list(envs):
     tabular_data = []
     for env, data in load_build_metadata(os.getcwd(), envs).items():
+        env_targets = data.get("targets", []).copy()
+        if not any(t.get("name") == "build" for t in env_targets):
+            env_targets.append(
+                {
+                    "name": "build",
+                    "group": "General",
+                    "title": "Build",
+                    "description": "Build project environments",
+                }
+            )
         tabular_data.extend(
             sorted(
                 [
@@ -321,7 +340,7 @@ def print_target_list(envs):
                         t["title"],
                         t.get("description"),
                     )
-                    for t in data.get("targets", [])
+                    for t in env_targets
                 ],
                 key=operator.itemgetter(1, 2),
             )

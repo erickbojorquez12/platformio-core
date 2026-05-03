@@ -39,6 +39,7 @@ class TestRunnerOptions:  # pylint: disable=too-many-instance-attributes
         monitor_rts=None,
         monitor_dtr=None,
         program_args=None,
+        custom_args=None,
     ):
         self.verbose = verbose
         self.without_building = without_building
@@ -51,6 +52,7 @@ class TestRunnerOptions:  # pylint: disable=too-many-instance-attributes
         self.monitor_rts = monitor_rts
         self.monitor_dtr = monitor_dtr
         self.program_args = program_args
+        self.custom_args = custom_args
 
 
 class TestRunnerBase:
@@ -191,6 +193,7 @@ class TestRunnerBase:
             environment=[self.test_suite.env_name],
             disable_auto_clean="nobuild" in targets,
             target=targets,
+            custom_args=self.options.custom_args,
         )
 
     def configure_build_env(self, env):

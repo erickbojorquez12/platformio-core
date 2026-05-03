@@ -83,6 +83,7 @@ class PlatformRunMixin:
         # pylint: disable=protected-access
         args.append("ISATTY=%d" % int(click._compat.isatty(sys.stdout)))
         # encode and append variables
+        custom_args = variables.pop("custom_args", [])
         for key, value in variables.items():
             args.append("%s=%s" % (key.upper(), self.encode_scons_arg(value)))
 
@@ -94,6 +95,9 @@ class PlatformRunMixin:
             )
         elif targets:
             args.extend(targets)
+
+        if custom_args:
+            args.extend(custom_args)
 
         # force SCons output to Unicode
         os.environ["PYTHONIOENCODING"] = "utf-8"
