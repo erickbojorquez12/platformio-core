@@ -585,3 +585,33 @@ def test_custom_project_platforms(
             match="Unknown board ID",
         ):
             validate_cliresult(result)
+
+
+def test_test_framework_not_uninstalled(
+    isolated_pio_core, tmp_path
+):
+    from platformio.package.commands.install import install_project_env_dependencies
+
+    project_dir = tmp_path / "project"
+    project_dir.mkdir()
+    (project_dir / "platformio.ini").write_text("""
+[env:testenv]
+platform = native
+test_framework = googletest
+""")
+    with fs.cd(str(project_dir)):
+        config = ProjectConfig.get_instance()
+        storage_dir = os.path.join(config.get("platformio", "libdeps_dir"), "testenv")
+        lm = LibraryPackageManager(storage_dir)
+
+        # 1. Install dependencies for testing
+        install_project_env_dependencies("testenv", options={"project_targets": ["__test"]})
+        
+        # googletest should be installed
+        assert any(pkg.metadata.name == "googletest" for pkg in lm.get_installed())
+
+        # 2. Install dependencies for normal run
+        install_project_env_dependencies("testenv", options={"project_targets": []})
+        
+        # googletest should still be installed
+        assert any(pkg.metadata.name == "googletest" for pkg in lm.get_installed())
