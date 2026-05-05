@@ -101,6 +101,9 @@ class PlatformRunMixin:
 
         # force SCons output to Unicode
         os.environ["PYTHONIOENCODING"] = "utf-8"
+        # ensure the SCons subprocess resolves platformio from the same
+        # Python path as the current process (important for local development)
+        os.environ["PYTHONPATH"] = os.pathsep.join(sys.path)
 
         if targets and "menuconfig" in targets:
             return proc.exec_command(
