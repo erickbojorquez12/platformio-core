@@ -237,13 +237,20 @@ def _install_project_env_libraries(project_env, options):
         private_lm.set_log_level(logging.WARN)
 
     lib_deps = config.get(f"env:{project_env}", "lib_deps")
-    if "__test" in options.get("project_targets", []):
-        test_runner = TestRunnerFactory.new(
-            TestSuite(project_env, options.get("piotest_running_name", "*")), config
-        )
-        lib_deps.extend(test_runner.EXTRA_LIB_DEPS or [])
+    
+    test_runner = TestRunnerFactory.new(
+        TestSuite(project_env, options.get("piotest_running_name", "*")), config
+    )
+    test_lib_deps = test_runner.EXTRA_LIB_DEPS or []
 
-    _uninstall_project_unused_libdeps(env_lm, lib_deps)
+    if "__test" in options.get("project_targets", []):
+        lib_deps.extend(test_lib_deps)
+
+    allowed_lib_deps = lib_deps.copy()
+    if "__test" not in options.get("project_targets", []):
+        allowed_lib_deps.extend(test_lib_deps)
+
+    _uninstall_project_unused_libdeps(env_lm, allowed_lib_deps)
 
     for library in lib_deps:
         spec = PackageSpec(library)
