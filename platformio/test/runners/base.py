@@ -35,6 +35,7 @@ class TestRunnerOptions:  # pylint: disable=too-many-instance-attributes
         without_debugging=True,
         upload_port=None,
         test_port=None,
+        test_port_break=False,
         no_reset=False,
         monitor_rts=None,
         monitor_dtr=None,
@@ -48,6 +49,7 @@ class TestRunnerOptions:  # pylint: disable=too-many-instance-attributes
         self.without_debugging = without_debugging
         self.upload_port = upload_port
         self.test_port = test_port
+        self.test_port_break = test_port_break
         self.no_reset = no_reset
         self.monitor_rts = monitor_rts
         self.monitor_dtr = monitor_dtr
@@ -83,6 +85,11 @@ class TestRunnerBase:
     def get_test_port(self):
         return self.options.test_port or self.project_config.get(
             f"env:{self.test_suite.env_name}", "test_port"
+        )
+
+    def get_test_port_break(self):
+        return self.options.test_port_break or self.project_config.get(
+            f"env:{self.test_suite.env_name}", "test_port_break"
         )
 
     def start(self, cmd_ctx):
