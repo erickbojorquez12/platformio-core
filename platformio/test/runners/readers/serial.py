@@ -57,6 +57,9 @@ class SerialTestOutputReader:
             ser.setRTS(True)
             sleep(0.1)
 
+        if self.test_runner.get_test_port_break():
+            ser.send_break()
+
         while not self.test_runner.test_suite.is_finished():
             self.test_runner.on_testing_data_output(ser.read(ser.in_waiting or 1))
         ser.close()
