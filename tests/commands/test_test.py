@@ -19,10 +19,12 @@ import xml.etree.ElementTree as ET
 from pathlib import Path
 
 import pytest
+from unittest.mock import MagicMock
 
 from platformio import proc
 from platformio.fs import load_json
 from platformio.test.cli import cli as pio_test_cmd
+from platformio.test.runners.readers.serial import SerialTestOutputReader
 
 
 def test_calculator_example(tmp_path: Path):
@@ -623,3 +625,30 @@ def test_googletest_framework(clirunner, tmp_path: Path):
     assert json_report["failure_nums"] == 0
     assert json_report["skipped_nums"] == 1
     assert len(json_report["test_suites"]) == 4
+
+
+def test_test_port_break_sends_break_signal(monkeypatch):
+    """
+    Test that when `test_port_break` is enabled, the SerialTestOutputReader 
+    successfully calls send_break() on the serial connection.
+    """
+    mock_serial_instance = MagicMock()
+    
+    monkeypatch.setattr(
+        "platformio.test.runners.readers.serial.serial.serial_for_url",
+        lambda *args, **kwargs: mock_serial_instance
+    )
+
+    mock_test_runner = MagicMock()
+    mock_test_runner.get_test_port_break.return_value = True
+    mock_test_runner.options.no_reset = True
+    mock_test_runner.test_suite.is_finished.return_value = True
+
+    reader = SerialTestOutputReader(mock_test_runner)
+    monkeypatch.setattr(reader, "resolve_test_port", lambda: "COM3")
+    
+    reader.begin()
+
+    mock_serial_instance.send_break.assert_called_once()
+    mock_serial_instance.open.assert_called_once()
+    mock_serial_instance.close.assert_called_once()
