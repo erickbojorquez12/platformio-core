@@ -51,6 +51,11 @@ from platformio.test.runners.factory import TestRunnerFactory
 @click.option("--upload-port")
 @click.option("--test-port")
 @click.option(
+    "--test-port-break",
+    is_flag=True,
+    help="Send a break condition to the test port before reading data",
+)
+@click.option(
     "-d",
     "--project-dir",
     default=os.getcwd,
@@ -102,6 +107,7 @@ def cli(  # pylint: disable=too-many-arguments,too-many-positional-arguments,too
     filter,
     upload_port,
     test_port,
+    test_port_break,
     project_dir,
     project_conf,
     without_building,
@@ -150,6 +156,7 @@ def cli(  # pylint: disable=too-many-arguments,too-many-positional-arguments,too
                     without_testing=without_testing,
                     upload_port=upload_port,
                     test_port=test_port,
+                    test_port_break=test_port_break,
                     no_reset=no_reset,
                     monitor_rts=monitor_rts,
                     monitor_dtr=monitor_dtr,
