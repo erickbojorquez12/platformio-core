@@ -687,6 +687,13 @@ ProjectOptions = OrderedDict(
             ),
             ConfigEnvOption(
                 group="test",
+                name="test_port_break",
+                description="Send a break condition to the test port before reading data",
+                type=click.BOOL,
+                default=False,
+            ),
+            ConfigEnvOption(
+                group="test",
                 name="test_speed",
                 description="A connection speed (baud rate) to communicate with "
                 "a target device",
